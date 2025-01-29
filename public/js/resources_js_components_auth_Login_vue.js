@@ -41,10 +41,9 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               return axios__WEBPACK_IMPORTED_MODULE_0___default().post('/api/login', _this.form);
             case 3:
               response = _context.sent;
-              token = response.data.token; // Get the token from the response
+              token = response.data.token;
               console.log('token: ', token);
-              localStorage.setItem('token', token); // Store the token in local storage
-
+              localStorage.setItem('token', token);
               _this.$toast.open({
                 message: 'Login successful',
                 type: 'success'

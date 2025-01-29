@@ -44,9 +44,9 @@ export default {
     async login() {
       try {
         const response = await axios.post('/api/login', this.form);
-        const token = response.data.token; // Get the token from the response
+        const token = response.data.token; 
         console.log('token: ', token);
-        localStorage.setItem('token', token); // Store the token in local storage
+        localStorage.setItem('token', token); 
 
         this.$toast.open({
           message: 'Login successful',

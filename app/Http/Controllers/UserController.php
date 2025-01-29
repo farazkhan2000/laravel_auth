@@ -16,6 +16,8 @@ class UserController extends Controller
             'password' => 'required',
         ]);
 
+        $data['password'] = Hash::make($data['password']);
+
         User::create($data);
 
         return response()->json(['message' => 'User registered successfully']);
@@ -37,7 +39,7 @@ class UserController extends Controller
     }
 
     public function logout() {
-        Auth::logout();
+        Auth::user()->currentAccessToken()->delete();
         return response()->json(['message' => 'Logged out successfully'], 200);
     }
 

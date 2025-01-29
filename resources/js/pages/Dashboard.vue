@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 
 export default {
   name: 'dashboard',
@@ -17,13 +18,16 @@ export default {
   },
   async mounted() {
     try {
-      const response = await axios.get('/api/logged-in-user');
-      this.user = response.data;
-      console.log('this.user: ', this.user);
+      const response = await axios.get('/api/logged-in-user', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } 
+      });
+
+      this.user = response.data.user; 
+      // console.log('User:', this.user);
     } catch (error) {
       console.error('Error fetching user:', error);
+      this.$router.push('/login'); 
     }
   }
 }
-
 </script>

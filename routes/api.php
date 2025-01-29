@@ -24,6 +24,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
-Route::post('/logout', [UserController::class, 'logout']);
-Route::get('/logged-in-user', [UserController::class, 'getUser']);
 Route::get('/verify-password', [UserController::class, 'verifyPassword']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    // auth routes
+    Route::post('/logout', [UserController::class, 'logout']);
+    Route::get('/logged-in-user', [UserController::class, 'getUser']);
+    // Other routes
+});
