@@ -25,7 +25,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       form: {
         email: '',
         password: ''
-      }
+      },
+      loading: false
     };
   },
   methods: {
@@ -36,35 +37,47 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
-              _context.prev = 0;
-              _context.next = 3;
+              _this.loading = true;
+              _context.prev = 1;
+              _context.next = 4;
               return axios__WEBPACK_IMPORTED_MODULE_0___default().post('/api/login', _this.form);
-            case 3:
+            case 4:
               response = _context.sent;
-              token = response.data.token;
-              console.log('token: ', token);
+              token = response.data.token; // Store token in Vuex and localStorage
+              _this.$store.commit('SET_TOKEN', token);
               localStorage.setItem('token', token);
+
+              // Fetch user data
+              _context.next = 10;
+              return _this.$store.dispatch('fetchUser');
+            case 10:
               _this.$toast.open({
                 message: 'Login successful',
                 type: 'success'
               });
 
-              // Redirect to dashboard after successful login
-              _this.$router.push('/dashboard');
-              _context.next = 14;
+              // Redirect to dashboard
+              _this.$router.push({
+                name: 'Dashboard'
+              });
+              _context.next = 17;
               break;
-            case 11:
-              _context.prev = 11;
-              _context.t0 = _context["catch"](0);
+            case 14:
+              _context.prev = 14;
+              _context.t0 = _context["catch"](1);
               _this.$toast.open({
                 message: 'Login failed: ' + (((_error$response = _context.t0.response) === null || _error$response === void 0 || (_error$response = _error$response.data) === null || _error$response === void 0 ? void 0 : _error$response.message) || 'Invalid credentials'),
                 type: 'error'
               });
-            case 14:
+            case 17:
+              _context.prev = 17;
+              _this.loading = false;
+              return _context.finish(17);
+            case 20:
             case "end":
               return _context.stop();
           }
-        }, _callee, null, [[0, 11]]);
+        }, _callee, null, [[1, 14, 17, 20]]);
       }))();
     }
   }
@@ -112,18 +125,17 @@ var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
   "for": "email",
   "class": "form-label"
 }, "Email address", -1 /* HOISTED */);
-var _hoisted_9 = {
+var _hoisted_9 = ["disabled"];
+var _hoisted_10 = {
   "class": "mb-3"
 };
-var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
   "for": "password",
   "class": "form-label"
 }, "Password", -1 /* HOISTED */);
-var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-  type: "submit",
-  "class": "btn btn-light w-100 rounded-0 mt-5"
-}, "Login", -1 /* HOISTED */);
-var _hoisted_12 = {
+var _hoisted_12 = ["disabled"];
+var _hoisted_13 = ["disabled"];
+var _hoisted_14 = {
   "class": "text-center mt-3"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
@@ -140,16 +152,22 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
       return $data.form.email = $event;
     }),
-    required: ""
-  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.email]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [_hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    required: "",
+    disabled: $data.loading
+  }, null, 8 /* PROPS */, _hoisted_9), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.email]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [_hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     type: "password",
     "class": "form-control rounded-0",
     id: "password",
     "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
       return $data.form.password = $event;
     }),
-    required: ""
-  }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.password]])]), _hoisted_11], 32 /* NEED_HYDRATION */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Don't have an account? "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
+    required: "",
+    disabled: $data.loading
+  }, null, 8 /* PROPS */, _hoisted_12), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.password]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    type: "submit",
+    "class": "btn btn-light w-100 rounded-0 mt-5",
+    disabled: $data.loading
+  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.loading ? "Logging in..." : "Login"), 9 /* TEXT, PROPS */, _hoisted_13)], 32 /* NEED_HYDRATION */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Don't have an account? "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
     to: "/register",
     "class": "text-white"
   }, {

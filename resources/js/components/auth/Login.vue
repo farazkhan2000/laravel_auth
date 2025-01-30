@@ -9,16 +9,33 @@
             <form @submit.prevent="login">
               <div class="mb-3">
                 <label for="email" class="form-label">Email address</label>
-                <input type="email" class="form-control rounded-0" id="email" v-model="form.email" required>
+                <input 
+                  type="email" 
+                  class="form-control rounded-0" 
+                  id="email" 
+                  v-model="form.email" 
+                  required 
+                  :disabled="loading"
+                >
               </div>
               <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control rounded-0" id="password" v-model="form.password" required>
+                <input 
+                  type="password" 
+                  class="form-control rounded-0" 
+                  id="password" 
+                  v-model="form.password" 
+                  required 
+                  :disabled="loading"
+                >
               </div>
-              <button type="submit" class="btn btn-light w-100 rounded-0 mt-5">Login</button>
+              <button type="submit" class="btn btn-light w-100 rounded-0 mt-5" :disabled="loading">
+                {{ loading ? "Logging in..." : "Login" }}
+              </button>
             </form>
             <p class="text-center mt-3">
-              Don't have an account? <router-link to="/register" class="text-white" >Register</router-link>
+              Don't have an account? 
+              <router-link to="/register" class="text-white">Register</router-link>
             </p>
           </div>
         </div>
@@ -37,29 +54,39 @@ export default {
       form: {
         email: '',
         password: ''
-      }
+      },
+      loading: false
     };
   },
   methods: {
     async login() {
+      this.loading = true;
       try {
         const response = await axios.post('/api/login', this.form);
-        const token = response.data.token; 
-        console.log('token: ', token);
-        localStorage.setItem('token', token); 
+        const token = response.data.token;
+
+        // Store token in Vuex and localStorage
+        this.$store.commit('SET_TOKEN', token);
+        localStorage.setItem('token', token);
+
+        // Fetch user data
+        await this.$store.dispatch('fetchUser');
 
         this.$toast.open({
           message: 'Login successful',
           type: 'success',
         });
 
-        // Redirect to dashboard after successful login
-        this.$router.push('/dashboard');
+        // Redirect to dashboard
+        this.$router.push({ name: 'Dashboard' });
+
       } catch (error) {
         this.$toast.open({
           message: 'Login failed: ' + (error.response?.data?.message || 'Invalid credentials'),
           type: 'error',
         });
+      } finally {
+        this.loading = false;
       }
     }
   }

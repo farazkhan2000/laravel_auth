@@ -20,10 +20,10 @@
         </ul>
 
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-          <li v-if="user == null" class="nav-item">
+          <li v-if="!user" class="nav-item">
             <RouterLink class="nav-link" to="/register" @click="closeNavbar">Register</RouterLink>
           </li>
-          <li v-if="user == null" class="nav-item">
+          <li v-if="!user" class="nav-item">
             <RouterLink class="nav-link" to="/login" @click="closeNavbar">Login</RouterLink>
           </li>
           <li v-if="user" class="nav-item">
@@ -36,52 +36,24 @@
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      user: null
-    }
-  },
-  async mounted() {
-    try {
-      const response = await axios.get('/api/logged-in-user', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } 
-      });
+import { mapGetters, mapActions } from 'vuex';
 
-      this.user = response.data.user; 
-    } catch (error) {
-      console.error('Error fetching user:', error);
-      this.$router.push('/login');
-    }
+export default {
+   name: 'Navbar',
+  computed: {
+    ...mapGetters(['user']) // Map the 'user' getter from Vuex
   },
   methods: {
+    ...mapActions(['fetchUser', 'logoutUser']), // Map Vuex actions
     closeNavbar() {
       const navbarCollapse = document.querySelector("#navbarSupportedContent");
       if (navbarCollapse.classList.contains("show")) {
         new bootstrap.Collapse(navbarCollapse).hide();
       }
-    },
-    async logoutUser() {
-      try {
-        await axios.post('/api/logout', {}, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } 
-        });
-        
-        this.$toast.open({
-          message: 'Logout successful',
-          type: 'success',
-        });
-
-        localStorage.removeItem('token'); // Clear the token from local storage
-        this.user = null; // Clear user data
-        this.$router.push('/login'); // Redirect to login page
-      } catch (error) {
-        this.$toast.open({
-          message: 'Logout failed: ' + (error.response?.data?.message || 'Invalid credentials'),
-          type: 'error',
-        });
-      }
-    },
+    }
+  },
+  created() {
+    this.fetchUser(); // Fetch user data when the component is created
   }
 };
 </script>
